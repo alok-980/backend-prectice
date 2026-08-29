@@ -6,7 +6,7 @@ const createUserController = async (req, res) => {
         const { firstName, lastName, email, phone, address } = req.body;
 
         const file = req.file;
-
+        
         const uploadedFile = await imageKit.upload({
             file: file.buffer,
             fileName: file.originalname,
@@ -37,6 +37,32 @@ const createUserController = async (req, res) => {
     }
 }
 
+const getAllUserController = async (req, res) => {
+    try {
+        let users = await UserModel.find();
+
+        if (!users) {
+            res.status(404).json({
+                success: false,
+                message: "users not founde"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'user fetch successfully',
+            totalUser: users.length,
+            data: users
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 module.exports = {
-    createUserController
+    createUserController,
+    getAllUserController
 }
