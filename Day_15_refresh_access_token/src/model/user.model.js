@@ -5,27 +5,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        minLength: [3, "min 3 length is required"],
-        maxLength: [50, "max 50 length is accepted"]
+        minLength: 3,
+        maxLength: 30,
     },
 
     email: {
         type: String,
         required: true,
         trim: true,
-        unique: true
+        unique: true,
     },
 
-    password: {
+    hashedPassword: {
         type: String,
         required: true,
-        select: true
     },
 
     refreshToken: {
-        type: String
+        type: String,
+        default: null
     }
-}, { timestamps: true })
+})
 
 const UserModel = mongoose.model("users", userSchema);
 
