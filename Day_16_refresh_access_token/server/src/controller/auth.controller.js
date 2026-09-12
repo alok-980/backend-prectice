@@ -77,7 +77,7 @@ export const meController = async (req, res) => {
             }
         })
     } catch (error) {
-        res.status(400).json({
+        res.status(401).json({
             success: false,
             message: error.message
         })

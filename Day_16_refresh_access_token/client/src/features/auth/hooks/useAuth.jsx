@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
-import { registerApi } from "../api/authApi"
-import { AuthProvider } from "../../../app/context/authContext"
+import { registerApi, meApi } from "../api/authApi"
+import { authContext } from "../../../app/context/authContext"
 import { useNavigate } from "react-router"
 
 export const useAuth = () => {
     const navigate = useNavigate();
 
-    const { setUser, setAccessToken } = AuthProvider();
+    const { setUser, accessToken, setAccessToken } = useContext(authContext);
     const [showPassword, setShowPassword] = useState(false);
 
     const {
@@ -19,7 +19,7 @@ export const useAuth = () => {
 
     const handleRegister = async (data) => {
         const res = await registerApi(data);
-        setUser(res.user);
+        setUser(res.data.user);
         setAccessToken(res.accessToken);
 
         console.log("Registration data:", res);
@@ -28,12 +28,18 @@ export const useAuth = () => {
         navigate("/profile")
     };
 
+    const fetchProfile = async () => {
+        const res = await meApi(accessToken, setAccessToken);
+        setUser(res.data.user)
+    }
+
     return {
         showPassword,
         setShowPassword,
         register,
         handleSubmit,
         errors,
-        handleRegister
+        handleRegister,
+        fetchProfile
     }
 }
