@@ -181,7 +181,22 @@ export const refreshTokenController = async (req, res) => {
 
 export const meController = async (req, res) => {
     try {
-        
+        const { id } = req.user;
+
+        const user = await userModel.findById(id);
+
+        res.status(200).json({
+            success: true,
+            message: "User data fetch successfully",
+            data: {
+                user: {
+                    email: user.email,
+                    name: user.name,
+                    role: user.role,
+                    id: user._id
+                }
+            }
+        })
     } catch (error) {
         res.status(500).json({
             success: false,
