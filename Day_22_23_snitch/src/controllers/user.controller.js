@@ -64,7 +64,50 @@ export const registerController = async (req, res) => {
 
 export const loginController = async (req, res) => {
     try {
-        
+        const { email, password } = req.body;
+
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid email or password"
+            })
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+
+        if (!isPasswordValid) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid email or password"
+            })
+        }
+
+        const { accessToken, refreshToken } = generateToken({ userId: user._id, role: user.role });
+
+        await userModel.findByIdAndUpdate(user._id, {
+            refreshToken
+        })
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "User loggedin successfully",
+            data: {
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                },
+
+                accessToken
+            }
+        })
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -86,7 +129,6 @@ export const refreshTokenController = async (req, res) => {
 
 export const meController = async (req, res) => {
     try {
-        
         
     } catch (error) {
         res.status(500).json({
