@@ -118,7 +118,59 @@ export const loginController = async (req, res) => {
 
 export const refreshTokenController = async (req, res) => {
     try {
-        
+        const refreshToken = req.cookies.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                success: false,
+                message: "Refresh toke is required pleas login again"
+            })
+        }
+
+        console.log(refreshToken);
+
+        const decoded = verifyRefreshToken(refreshToken);
+        console.log(decoded)
+
+        const { id } = decoded;
+        console.log(id)
+
+        const user = await userModel.findById(id);
+
+        if (refreshToken != user.refreshToken) {
+            await userModel.findByIdAndUpdate(user._id, {
+                refreshToken: null
+            })
+
+            return res.status(401).json({
+                success: false,
+                message: "Refresh token mismatch"
+            })
+        }
+
+        const { accessToken, refreshToken: newRefreshToken } = generateToken({ userId: user._id, role: user.role });
+
+        await userModel.findByIdAndUpdate(user._id, {
+            refreshToken: newRefreshToken
+        })
+
+        res.cookie("refreshToken", newRefreshToken, {
+            httpOnly: true
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "Token rotated successfully",
+            data: {
+                user: {
+                    email: user.email,
+                    name: user.name,
+                    id: user._id
+                },
+
+                accessToken
+            }
+        })
     } catch (error) {
         res.status(500).json({
             success: false,
