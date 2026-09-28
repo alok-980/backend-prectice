@@ -18,11 +18,20 @@ export const authenticated = async (req, res, next) => {
         req.user = decode;
 
         next();
-        
+
     } catch (error) {
         res.status(401).json({
             success: false,
             message: "invalid or expire token"
         })
     }
+}
+
+export const isSeller = (req, res, next) => {
+    if (req.user.role !== "seller") {
+        return res.status(403).json({
+            message: "You are not authorized person to create product"
+        })
+    }
+    next();
 }

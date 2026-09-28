@@ -1,4 +1,4 @@
-import { body, validationResult } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 
 export const productCreateValidator = [
     body("title")
@@ -48,3 +48,23 @@ export const productCreateValidator = [
         next();
     }
 ];
+
+export const productIdValidator = [
+    param('id')
+        .exists().withMessage("Product ID is required").bail()
+        .isMongoId().withMessage("Product ID must be a valid mongo object ID"),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Data",
+                errors: errors.array()
+            })
+        }
+
+        next()
+    }
+]

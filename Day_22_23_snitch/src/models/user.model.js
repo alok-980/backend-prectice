@@ -13,16 +13,9 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
 
-    phone: {
-        type: String,
-        require: true,
-        trim: true,
-        unique: true
-    },
-
     passwordHash: {
         type: String,
-        require: true,
+        required: true,
     },
 
     role: {
@@ -34,7 +27,7 @@ const userSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
     }
-})
+}, { timestamps: true })
 
 const userModel = mongoose.model("users", userSchema);
 

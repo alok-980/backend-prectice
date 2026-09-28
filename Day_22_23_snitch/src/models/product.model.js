@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema({
             size: {
                 type: String,
                 enum: [ "XS", "S", "M", "L", "XL", "XXL" ],
-                required: true
+                // required: true
             },
             stock: {
                 type: Number,
@@ -55,7 +55,12 @@ const productSchema = new mongoose.Schema({
     seller: {
         type: mongoose.Types.ObjectId,
         ref: "users",
-        required: true
+        // required: true
+    },
+
+    published: {
+        type: Boolean,
+        default: false
     }
 })
 

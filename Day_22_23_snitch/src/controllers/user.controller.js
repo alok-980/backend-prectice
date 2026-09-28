@@ -127,13 +127,9 @@ export const refreshTokenController = async (req, res) => {
             })
         }
 
-        console.log(refreshToken);
-
         const decoded = verifyRefreshToken(refreshToken);
-        console.log(decoded)
 
         const { id } = decoded;
-        console.log(id)
 
         const user = await userModel.findById(id);
 
